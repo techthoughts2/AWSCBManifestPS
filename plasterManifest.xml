@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<plasterManifest schemaVersion="1.1" templateType="Project"
+  xmlns="http://www.microsoft.com/schemas/PowerShell/Plaster/v1">
+  <metadata>
+    <name>AWSCBManifestPS</name>
+    <id>83670531-579c-4a4c-a70a-ddc60eaefa40</id>
+    <version>0.8.0</version>
+    <title>New PowerShell Module for AWS CB</title>
+    <description>Scaffolds a new PowerShell module project intended for CI/CD workflow using AWS CodeBuild</description>
+    <author>Jake Morrison</author>
+    <tags>AWS,PowerShell,CodeBuild,PowerShell Module,Build</tags>
+  </metadata>
+  <parameters>
+    <parameter name='ModuleName' type='text' prompt='Enter the name of the module'/>
+    <parameter name='Version' type='text' prompt='Enter the version number of the module' default='0.0.1'/>
+    <parameter name='GitIgnore' type='choice' default='1' store='text' prompt='Would you like to generate a .gitignore file?'>
+      <choice label='&amp;gitignore' help="Adds a.gitignore file." value="GIT"/>
+      <choice label='&amp;None' help="Does not add a.gitignore file." value="NOGIT"/>
+    </parameter>
+    <parameter name='BuildSpec' type='multichoice' default='0,1' store='text' prompt='Select desired buildpsec file(s) options?'>
+      <choice label='&amp;Windows-PowerShell' help="Adds a powershell focused buildspec.yml." value="powershell"/>
+      <choice label='&amp;pwsh' help="Adds a pwsh focused buildspec.yml." value="pwsh"/>
+      <choice label='&amp;None' help="Does not add a buildspec file." value="both"/>
+    </parameter>
+  </parameters>
+  <content>
+    <message>&#10;&#10;Scaffolding your PowerShell Module for AWS CB...&#10;&#10;&#10;</message>
+    <file source='' destination='docs'/>
+    <file source='' destination='media'/>
+    <file source='' destination='src'/>
+    <file source='' destination='src\Archive'/>
+    <file source='' destination='src\Artifacts'/>
+    <file source='' destination='src\Tests'/>
+    <file source='' destination='src\Tests\Infrastrcuture'/>
+    <file source='' destination='src\Tests\Unit'/>
+    <file source='' destination='src\${PLASTER_PARAM_ModuleName}'/>
+    <file source='' destination='src\${PLASTER_PARAM_ModuleName}\Public'/>
+    <file source='' destination='src\${PLASTER_PARAM_ModuleName}\Private'/>
+    <file source='editor\VSCode\tasks.json' destination='.vscode\tasks.json' />
+    <file source='editor\VSCode\settings.json' destination='.vscode\settings.json' />
+
+    <templateFile source='src\test\PSModule-Module.Tests.ps1' destination='src\Tests\Unit\${PLASTER_PARAM_ModuleName}-Module.Tests.ps1' />
+    <templateFile source='src\test\ExportedFunctions.Tests.ps1' destination='src\Tests\Unit\ExportedFunctions.Tests.ps1' />
+
+    <file source='src\PSModule.build.ps1' destination='src\${PLASTER_PARAM_ModuleName}.build.ps1'/>
+    <file source='src\PSModule.Settings.ps1' destination='src\${PLASTER_PARAM_ModuleName}.Settings.ps1'/>
+    <file source='configure_aws_credential.ps1' destination='configure_aws_credential.ps1'/>
+    <file source='install_modules.ps1' destination='install_modules.ps1'/>
+
+    <file condition="$PLASTER_PARAM_GitIgnore -eq 'GIT'" source='.gitignore' destination='.gitignore' />
+    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'powershell'" source='buildspec_powershell.yml' destination='buildspec_powershell.yml' />
+    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwsh'" source='buildspec_pwsh.yml' destination='buildspec_pwsh.yml' />
+
+    <newModuleManifest destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1' moduleVersion='$PLASTER_PARAM_Version' rootModule='${PLASTER_PARAM_ModuleName}.psm1' encoding='UTF8-NoBOM' openInEditor="true"/>
+    <file source='Module.psm1' destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1' openInEditor="true"/>
+
+    <requireModule name="Pester" minimumVersion="4.5.0" message="Without Pester, you will not be able to run the provided Pester test to validate your module manifest file.`nWithout version 4.5.0, VS Code will not display Pester warnings and errors in the Problems panel."/>
+    <message>
+
+Your new PowerShell module project '$PLASTER_PARAM_ModuleName' has been created.
+
+    </message>
+
+    <message>
+A Pester test has been created to validate the module's manifest file.  Add additional tests to the test directory.
+You can run the Pester tests in your project by executing the 'test' task.  Press Ctrl+P, then type 'task test'.
+
+    </message>
+  </content>
+</plasterManifest>
