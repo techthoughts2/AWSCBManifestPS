@@ -4,7 +4,7 @@
   <metadata>
     <name>AWSCBManifestPS</name>
     <id>83670531-579c-4a4c-a70a-ddc60eaefa40</id>
-    <version>0.8.0</version>
+    <version>0.8.1</version>
     <title>New PowerShell Module for AWS CB</title>
     <description>Scaffolds a new PowerShell module project intended for CI/CD workflow using AWS CodeBuild</description>
     <author>Jake Morrison</author>
@@ -17,9 +17,10 @@
       <choice label='&amp;gitignore' help="Adds a.gitignore file." value="GIT"/>
       <choice label='&amp;None' help="Does not add a.gitignore file." value="NOGIT"/>
     </parameter>
-    <parameter name='BuildSpec' type='multichoice' default='0,1' store='text' prompt='Select desired buildpsec file(s) options?'>
-      <choice label='&amp;Windows-PowerShell' help="Adds a powershell focused buildspec.yml." value="powershell"/>
-      <choice label='&amp;pwsh' help="Adds a pwsh focused buildspec.yml." value="pwsh"/>
+    <parameter name='BuildSpec' type='multichoice' default='1' store='text' prompt='Select desired buildpsec file(s) options?'>
+      <choice label='&amp;Windows - PowerShell' help="Adds a powershell focused buildspec.yml for Windows CodeBuild." value="powershell"/>
+      <choice label='&amp;Core (Windows)- pwsh' help="Adds a pwsh focused buildspec.yml for Windows CodeBuild." value="pwshcore"/>
+      <choice label='&amp;Linux - pwsh' help="Adds a pwsh focused buildspec.yml for Linux CodeBuild." value="pwsh"/>
       <choice label='&amp;None' help="Does not add a buildspec file." value="both"/>
     </parameter>
   </parameters>
@@ -48,11 +49,13 @@
     <file source='install_modules.ps1' destination='install_modules.ps1'/>
 
     <file condition="$PLASTER_PARAM_GitIgnore -eq 'GIT'" source='.gitignore' destination='.gitignore' />
-    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'powershell'" source='buildspec_powershell.yml' destination='buildspec_powershell.yml' />
-    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwsh'" source='buildspec_pwsh.yml' destination='buildspec_pwsh.yml' />
+    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'powershell'" source='buildspec_powershell_windows' destination='buildspec_powershell_windows.yml' />
+    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
+    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwsh'" source='buildspec_pwsh_linux.yml' destination='buildspec_pwsh_linux.yml' />
 
     <newModuleManifest destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1' moduleVersion='$PLASTER_PARAM_Version' rootModule='${PLASTER_PARAM_ModuleName}.psm1' encoding='UTF8-NoBOM' openInEditor="true"/>
     <file source='Module.psm1' destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1' openInEditor="true"/>
+
 
     <requireModule name="Pester" minimumVersion="4.5.0" message="Without Pester, you will not be able to run the provided Pester test to validate your module manifest file.`nWithout version 4.5.0, VS Code will not display Pester warnings and errors in the Problems panel."/>
     <message>
@@ -64,7 +67,7 @@ Your new PowerShell module project '$PLASTER_PARAM_ModuleName' has been created.
     <message>
 A Pester test has been created to validate the module's manifest file.  Add additional tests to the test directory.
 You can run the Pester tests in your project by executing the 'test' task.  Press Ctrl+P, then type 'task test'.
-
+S3 BucketNames references will need to be changed to your own S3 BucketNames.
     </message>
   </content>
 </plasterManifest>
