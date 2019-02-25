@@ -17,7 +17,7 @@
       <choice label='&amp;gitignore' help="Adds a.gitignore file." value="GIT"/>
       <choice label='&amp;None' help="Does not add a.gitignore file." value="NOGIT"/>
     </parameter>
-    <parameter name='BuildSpec' type='multichoice' default='1' store='text' prompt='Select desired buildpsec file(s) options?'>
+    <parameter name='BuildSpec' type='multichoice' default='1,2' store='text' prompt='Select desired buildpsec file(s) options?'>
       <choice label='&amp;Windows - PowerShell' help="Adds a powershell focused buildspec.yml for Windows CodeBuild." value="powershell"/>
       <choice label='&amp;Core (Windows)- pwsh' help="Adds a pwsh focused buildspec.yml for Windows CodeBuild." value="pwshcore"/>
       <choice label='&amp;Linux - pwsh' help="Adds a pwsh focused buildspec.yml for Linux CodeBuild." value="pwsh"/>
