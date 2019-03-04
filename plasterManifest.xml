@@ -13,6 +13,10 @@
   <parameters>
     <parameter name='ModuleName' type='text' prompt='Enter the name of the module'/>
     <parameter name='Version' type='text' prompt='Enter the version number of the module' default='0.0.1'/>
+    <parameter name='RepoType' type='choice' default='0' store='text' prompt='Where will this project be hosted?'>
+      <choice label='&amp;GitHub ' help="Hosted on GitHub." value="GITHUB"/>
+      <choice label='&amp;AWS CodeCommit' help="Hosted on AWS CodeCommit." value="CC"/>
+    </parameter>
     <parameter name='GitIgnore' type='choice' default='1' store='text' prompt='Would you like to generate a .gitignore file?'>
       <choice label='&amp;gitignore' help="Adds a.gitignore file." value="GIT"/>
       <choice label='&amp;None' help="Does not add a.gitignore file." value="NOGIT"/>
@@ -54,7 +58,8 @@
     <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
     <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwsh'" source='buildspec_pwsh_linux.yml' destination='buildspec_pwsh_linux.yml' />
     <templateFile source='install_modules.ps1' destination='install_modules.ps1'/>
-    <templateFile source='CloudFormation\PowerShellCodeBuild.yml' destination='CloudFormation\PowerShellCodeBuild.yml'/>
+    <templateFile condition="$PLASTER_PARAM_RepoType -eq 'GITHUB'" source='CloudFormation\PowerShellCodeBuildGit.yml' destination='CloudFormation\PowerShellCodeBuildGit.yml'/>
+    <templateFile condition="$PLASTER_PARAM_RepoType -eq 'CC'" source='CloudFormation\PowerShellCodeBuildCC.yml' destination='CloudFormation\PowerShellCodeBuildCC.yml'/>
 
     <newModuleManifest destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1' moduleVersion='$PLASTER_PARAM_Version' rootModule='${PLASTER_PARAM_ModuleName}.psm1' encoding='UTF8-NoBOM' openInEditor="true"/>
     <file source='Module.psm1' destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1' openInEditor="true"/>

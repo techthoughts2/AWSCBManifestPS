@@ -7,16 +7,20 @@ Parameters:
     Description: name of PS Module. Used as project tag value for all resources.
     Type: String
     Default: <%=$PLASTER_PARAM_ModuleName%>
+
   ProjectDescription:
     Description: short description of your PS module project.
     Type: String
+
   RepositoryUrl:
     Description: "HTTPS Clone URL of the repository in GitHub. Example: 'https://github.com/owner/repo.git'"
     Type: String
+
   BranchName:
     Default: BranchName
     Description: the GitHub branch that will be monitored for builds (CASE SENSITIVE).
     Type: String
+
   CodeBuildBadgeEnabled:
     Type: String
     Default: "true"
@@ -24,10 +28,12 @@ Parameters:
     AllowedValues:
       - "true"
       - "false"
+
   CodeBuildTimeoutInMinutes:
     Type: Number
     Default: 30
     Description: The number of minutes before a CodeBuild build will timeout.
+
   # https://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli
   CodeBuildEnvironment:
     Type: String
@@ -36,6 +42,7 @@ Parameters:
     AllowedValues:
       - WINDOWS_CONTAINER
       - LINUX_CONTAINER
+
   # https://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli
   CodeBuildComputeType:
     Type: String
@@ -45,6 +52,7 @@ Parameters:
       - BUILD_GENERAL1_SMALL
       - BUILD_GENERAL1_MEDIUM
       - BUILD_GENERAL1_LARGE
+
   # https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
   #CodeBuildImage:
   #  Type: String
@@ -53,6 +61,7 @@ Parameters:
   #  AllowedValues:
   #    - aws/codebuild/windows-base:1.0
   #    - aws/codebuild/dot-net:core-2.1
+
   BuildSpecFile:
     Type: String
     Default: buildspec_powershell_windows.yml
@@ -61,6 +70,7 @@ Parameters:
       - buildspec_powershell_windows.yml
       - buildspec_pwsh_windows.yml
       - buildspec_pwsh_linux.yml
+
   DeployEmailNotifications:
     Type: String
     Default: "no"
@@ -68,6 +78,7 @@ Parameters:
     AllowedValues:
       - "yes"
       - "no"
+
   EmailForNotifications:
     Type: String
     Default: ignored@doesnotexist.com
@@ -132,7 +143,6 @@ Conditions:
   WindowsImage: !Equals [!Ref CodeBuildEnvironment, "WINDOWS_CONTAINER"]
 
 Resources:
-
   # The IAM Role CodeBuild will run the container as
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
@@ -271,7 +281,6 @@ Resources:
               account: "$.account"
 
 Outputs:
-
   CodeBuildProject:
     Description: The name of the CodeBuild Project.
     Value: !Ref CodeBuildProject
@@ -284,9 +293,9 @@ Outputs:
     Description: CodeBuild URL
     Value:
       Fn::Join:
-      - ''
-      - - https://console.aws.amazon.com/codebuild/home?region=
-        - Ref: AWS::Region
-        - "#/projects/"
-        - Ref: CodeBuildProject
-        - "/view"
+        - ""
+        - - https://console.aws.amazon.com/codebuild/home?region=
+          - Ref: AWS::Region
+          - "#/projects/"
+          - Ref: CodeBuildProject
+          - "/view"
