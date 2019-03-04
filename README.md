@@ -204,6 +204,14 @@ You may wish to use different CodeBuid projects to monitor different branches of
 
 [AWS CodeBuild Project WebhookFilter](https://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-webhookfilter.html)
 
+### Example Projects
+
+A few PowerShell module projects you can reference that are using AWS CodeBuild:
+
+* [PoshGram](https://github.com/techthoughts2/PoshGram)
+* [Diag-V](https://github.com/techthoughts2/Diag-V)
+* [FastPing](https://github.com/austoonz/FastPing)
+
 ## License
 
 This project is [licensed under the MIT License](LICENSE).
