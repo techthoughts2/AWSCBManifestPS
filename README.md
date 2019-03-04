@@ -173,7 +173,7 @@ You can run the Pester tests in your project by executing the 'test' task.  Pres
 6. Create your CodeBuild project in your AWS account. You can do this through the GUI or use the generated CloudFormation template (recommended).
 
    * The template will guide you through the process, don't forget to choose the correct container type based on what type of PowerShell/platform you're desiring to build against. You will need a SEPERATE CodeBuild for each build type. So, if you wanted to build against all three platforms, you would deploy the template three times.
-   * The following shows the GitHub CFN example: ![PowerShell CodeBuild CFN Example](media/PowerShell_CodeBuild_CFN_Example.png "PowerShell CodeBuild CFN Example")
+   * The following shows the GitHub CFN example: ![PowerShell CodeBuild CFN Example](media/PowerShell_CodeBuild_CFN_Example.PNG "PowerShell CodeBuild CFN Example")
    * *Don't forget to copy your badge URL to display on your project*
 
 7. Write a kick-ass module (the hardest part)
