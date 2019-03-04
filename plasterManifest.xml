@@ -17,6 +17,7 @@
       <choice label='&amp;gitignore' help="Adds a.gitignore file." value="GIT"/>
       <choice label='&amp;None' help="Does not add a.gitignore file." value="NOGIT"/>
     </parameter>
+    <parameter name='S3Bucket' type='text' prompt='Enter S3 bucket name to download needed PS modules from S3 location. Leave blank to DL modules from PSGallery.' default='PSGallery'/>
     <parameter name='BuildSpec' type='multichoice' default='1,2' store='text' prompt='Select desired buildpsec file(s) options?'>
       <choice label='&amp;Windows - PowerShell' help="Adds a powershell focused buildspec.yml for Windows CodeBuild." value="powershell"/>
       <choice label='&amp;Core (Windows)- pwsh' help="Adds a pwsh focused buildspec.yml for Windows CodeBuild." value="pwshcore"/>
@@ -29,6 +30,7 @@
     <file source='' destination='docs'/>
     <file source='' destination='media'/>
     <file source='' destination='src'/>
+    <file source='' destination='CloudFormation'/>
     <file source='' destination='src\Archive'/>
     <file source='' destination='src\Artifacts'/>
     <file source='' destination='src\Tests'/>
@@ -46,12 +48,13 @@
     <file source='src\PSModule.build.ps1' destination='src\${PLASTER_PARAM_ModuleName}.build.ps1'/>
     <file source='src\PSModule.Settings.ps1' destination='src\${PLASTER_PARAM_ModuleName}.Settings.ps1'/>
     <file source='configure_aws_credential.ps1' destination='configure_aws_credential.ps1'/>
-    <file source='install_modules.ps1' destination='install_modules.ps1'/>
 
     <file condition="$PLASTER_PARAM_GitIgnore -eq 'GIT'" source='.gitignore' destination='.gitignore' />
     <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'powershell'" source='buildspec_powershell_windows' destination='buildspec_powershell_windows.yml' />
     <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
     <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwsh'" source='buildspec_pwsh_linux.yml' destination='buildspec_pwsh_linux.yml' />
+    <templateFile source='install_modules.ps1' destination='install_modules.ps1'/>
+    <templateFile source='CloudFormation\PowerShellCodeBuild.yml' destination='CloudFormation\PowerShellCodeBuild.yml'/>
 
     <newModuleManifest destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1' moduleVersion='$PLASTER_PARAM_Version' rootModule='${PLASTER_PARAM_ModuleName}.psm1' encoding='UTF8-NoBOM' openInEditor="true"/>
     <file source='Module.psm1' destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1' openInEditor="true"/>

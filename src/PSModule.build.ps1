@@ -338,7 +338,9 @@ task Build {
     #cleanup artifacts that are no longer required
     Remove-Item "$($script:ArtifactsPath)\Public" -Recurse -Force -ErrorAction Stop
     Remove-Item "$($script:ArtifactsPath)\Private" -Recurse -Force -ErrorAction Stop
-    #Remove-Item "$($script:ArtifactsPath)\docs" -Recurse -Force -ErrorAction Stop
+    Write-Host -NoNewLine "      Overwriting docs output."
+    Move-Item "$($script:ArtifactsPath)\docs\*.md" -Destination "..\docs\" -Force
+    Remove-Item "$($script:ArtifactsPath)\docs" -Recurse -Force -ErrorAction Stop
     Write-Host -ForegroundColor Green '...Build Complete!'
 }#Build
 

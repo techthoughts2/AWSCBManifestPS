@@ -20,6 +20,21 @@
     Pester, InvokeBuild, PSScriptAnalyzer, platyPS will typically be required by all module builds
     which is why they are included in this build script. Adjust versions as needed.
 #>
+
+
+<%
+If ($PLASTER_PARAM_S3Bucket -eq 'PSGallery') {
+@'
+$galleryDownload = $true
+'@
+}
+else{
+@'
+$galleryDownload = $false
+'@
+}
+%>
+
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $VerbosePreference = 'SilentlyContinue'
@@ -30,25 +45,25 @@ $modulesToInstall = [System.Collections.ArrayList]::new()
 $null = $modulesToInstall.Add(([PSCustomObject]@{
             ModuleName    = 'Pester'
             ModuleVersion = '4.4.5'
-            BucketName    = 'ps-invoke-modules'
+            BucketName    = $PLASTER_PARAM_S3Bucket
             KeyPrefix     = ''
         }))
 $null = $modulesToInstall.Add(([PSCustomObject]@{
             ModuleName    = 'InvokeBuild'
             ModuleVersion = '5.4.3'
-            BucketName    = 'ps-invoke-modules'
+            BucketName    = $PLASTER_PARAM_S3Bucket
             KeyPrefix     = ''
         }))
 $null = $modulesToInstall.Add(([PSCustomObject]@{
             ModuleName    = 'PSScriptAnalyzer'
             ModuleVersion = '1.17.1'
-            BucketName    = 'ps-invoke-modules'
+            BucketName    = $PLASTER_PARAM_S3Bucket
             KeyPrefix     = ''
         }))
 $null = $modulesToInstall.Add(([PSCustomObject]@{
             ModuleName    = 'platyPS'
             ModuleVersion = '0.12.0'
-            BucketName    = 'ps-invoke-modules'
+            BucketName    = $PLASTER_PARAM_S3Bucket
             KeyPrefix     = ''
         }))
 
@@ -92,32 +107,52 @@ else {
     throw 'Unrecognized OS platform'
 }
 
-'Installing PowerShell Modules'
-foreach ($module in $modulesToInstall) {
-    '  - {0} {1}' -f $module.ModuleName, $module.ModuleVersion
+if ($galleryDownload -eq $false) {
+    'Installing PowerShell Modules'
+    foreach ($module in $modulesToInstall) {
+        '  - {0} {1}' -f $module.ModuleName, $module.ModuleVersion
 
-    # Download file from S3
-    $key = '{0}_{1}.zip' -f $module.ModuleName, $module.ModuleVersion
-    $localFile = Join-Path -Path $tempPath -ChildPath $key
+        # Download file from S3
+        $key = '{0}_{1}.zip' -f $module.ModuleName, $module.ModuleVersion
+        $localFile = Join-Path -Path $tempPath -ChildPath $key
 
-    # Download modules from S3 to using the AWS CLI
-    #note: remove --quiet for more verbose output or if S3 download troubleshooting is needed
-    $s3Uri = 's3://{0}/{1}{2}' -f $module.BucketName, $module.KeyPrefix, $key
-    & aws s3 cp $s3Uri $localFile --quiet
+        # Download modules from S3 to using the AWS CLI
+        #note: remove --quiet for more verbose output or if S3 download troubleshooting is needed
+        $s3Uri = 's3://{0}/{1}{2}' -f $module.BucketName, $module.KeyPrefix, $key
+        & aws s3 cp $s3Uri $localFile --quiet
 
-    # Ensure the download worked
-    if (-not(Test-Path -Path $localFile)) {
-        $message = 'Failed to download {0}' -f $module.ModuleName
-        "  - $message"
-        throw $message
+        # Ensure the download worked
+        if (-not(Test-Path -Path $localFile)) {
+            $message = 'Failed to download {0}' -f $module.ModuleName
+            "  - $message"
+            throw $message
+        }
+
+        # Create module path
+        $modulePath = Join-Path -Path $moduleInstallPath -ChildPath $module.ModuleName
+        $moduleVersionPath = Join-Path -Path $modulePath -ChildPath $module.ModuleVersion
+        $null = New-Item -Path $modulePath -ItemType 'Directory' -Force
+        $null = New-Item -Path $moduleVersionPath -ItemType 'Directory' -Force
+
+        # Expand downloaded file
+        Expand-Archive -Path $localFile -DestinationPath $moduleVersionPath -Force
     }
-
-    # Create module path
-    $modulePath = Join-Path -Path $moduleInstallPath -ChildPath $module.ModuleName
-    $moduleVersionPath = Join-Path -Path $modulePath -ChildPath $module.ModuleVersion
-    $null = New-Item -Path $modulePath -ItemType 'Directory' -Force
-    $null = New-Item -Path $moduleVersionPath -ItemType 'Directory' -Force
-
-    # Expand downloaded file
-    Expand-Archive -Path $localFile -DestinationPath $moduleVersionPath -Force
+}#if_GalleryDownload
+else {
+    'Installing PowerShell Modules'
+    Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted
+    $NuGetProvider = Get-PackageProvider -Name "NuGet" -ErrorAction SilentlyContinue
+    if ( -not $NugetProvider ) {
+        Install-PackageProvider -Name "NuGet" -Confirm:$false -Force -Verbose
+    }
+    foreach ($module in $modulesToInstall) {
+        try {
+            Install-Module $module.ModuleName -RequiredVersion $module.ModuleVersion -Repository PSGallery
+        }
+        catch {
+            $message = 'Failed to install {0}' -f $module.ModuleName
+            "  - $message"
+            throw $message
+        }
+    }
 }

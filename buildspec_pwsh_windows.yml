@@ -8,7 +8,8 @@ phases:
   install:
     commands:
       - powershell -command '.\configure_aws_credential.ps1'
-      - aws s3 cp s3://ps-invoke-modules/PowerShell-6.1.1-win-x64.msi PowerShell-6.1.1-win-x64.msi --quiet
+      #- aws s3 cp s3://ps-invoke-modules/PowerShell-6.1.1-win-x64.msi PowerShell-6.1.1-win-x64.msi --quiet
+      - powershell -command '$url = "https://github.com/PowerShell/PowerShell/releases/download/v6.1.3/PowerShell-6.1.3-win-x64.msi";$output = "PowerShell-6.1.3-win-x64.msi";Invoke-WebRequest -Uri $url -OutFile $output -ErrorAction Stop;if (-not(Test-Path $output)) {throw "PSCore failed to DL"}'
       - powershell -command "Start-Process .\PowerShell-6.1.1-win-x64.msi -ArgumentList '/qn /norestart' -Wait"
       - '& "C:\Program Files\PowerShell\6\pwsh.exe" -command ''.\install_modules.ps1'''
   pre_build:
