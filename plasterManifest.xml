@@ -17,16 +17,24 @@
       <choice label='&amp;GitHub ' help="Hosted on GitHub." value="GITHUB"/>
       <choice label='&amp;AWS CodeCommit' help="Hosted on AWS CodeCommit." value="CC"/>
     </parameter>
-    <parameter name='GitIgnore' type='choice' default='1' store='text' prompt='Would you like to generate a .gitignore file?'>
+    <parameter name='GitIgnore' type='choice' default='0' store='text' prompt='Would you like to generate a .gitignore file?'>
       <choice label='&amp;gitignore' help="Adds a.gitignore file." value="GIT"/>
       <choice label='&amp;None' help="Does not add a.gitignore file." value="NOGIT"/>
     </parameter>
     <parameter name='S3Bucket' type='text' prompt='Enter S3 bucket name to download needed PS modules from S3 location. Leave blank to DL modules from PSGallery.' default='PSGallery'/>
-    <parameter name='BuildSpec' type='multichoice' default='1,2' store='text' prompt='Select desired buildpsec file(s) options?'>
-      <choice label='&amp;Windows - PowerShell' help="Adds a powershell focused buildspec.yml for Windows CodeBuild." value="powershell"/>
-      <choice label='&amp;Core (Windows)- pwsh' help="Adds a pwsh focused buildspec.yml for Windows CodeBuild." value="pwshcore"/>
-      <choice label='&amp;Linux - pwsh' help="Adds a pwsh focused buildspec.yml for Linux CodeBuild." value="pwsh"/>
-      <choice label='&amp;None' help="Does not add a buildspec file." value="both"/>
+    <parameter name='Options' type='multichoice' default='1,2' store='text' prompt='Select desired buildpsec file options?'>
+      <choice label='&amp;Windows - PowerShell'
+              help="Adds a powershell focused buildspec.yml for Windows CodeBuild."
+              value="ps"/>
+      <choice label='&amp;Core (Windows)- pwsh'
+              help="Adds a pwsh focused buildspec.yml for Windows CodeBuild."
+              value="pwshcore"/>
+      <choice label='&amp;Linux - pwsh'
+              help="Adds a pwsh focused buildspec.yml for Linux CodeBuild."
+              value="pwsh"/>
+      <choice label='&amp;None'
+              help="Does not add a buildspec file."
+              value="None"/>
     </parameter>
   </parameters>
   <content>
@@ -54,9 +62,9 @@
     <file source='configure_aws_credential.ps1' destination='configure_aws_credential.ps1'/>
 
     <file condition="$PLASTER_PARAM_GitIgnore -eq 'GIT'" source='.gitignore' destination='.gitignore' />
-    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'powershell'" source='buildspec_powershell_windows' destination='buildspec_powershell_windows.yml' />
-    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
-    <templateFile condition="$PLASTER_PARAM_BuildSpec -eq 'pwsh'" source='buildspec_pwsh_linux.yml' destination='buildspec_pwsh_linux.yml' />
+    <templateFile condition="$PLASTER_PARAM_Options -eq 'ps'" source='buildspec_powershell_windows.yml' destination='buildspec_powershell_windows.yml' />
+    <templateFile condition="$PLASTER_PARAM_Options -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
+    <templateFile condition="$PLASTER_PARAM_Options -eq 'pwsh'" source='buildspec_pwsh_linux.yml' destination='buildspec_pwsh_linux.yml' />
     <templateFile source='install_modules.ps1' destination='install_modules.ps1'/>
     <templateFile condition="$PLASTER_PARAM_RepoType -eq 'GITHUB'" source='CloudFormation\PowerShellCodeBuildGit.yml' destination='CloudFormation\PowerShellCodeBuildGit.yml'/>
     <templateFile condition="$PLASTER_PARAM_RepoType -eq 'CC'" source='CloudFormation\PowerShellCodeBuildCC.yml' destination='CloudFormation\PowerShellCodeBuildCC.yml'/>

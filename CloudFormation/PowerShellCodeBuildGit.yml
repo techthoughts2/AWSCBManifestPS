@@ -16,10 +16,10 @@ Parameters:
     Description: "HTTPS Clone URL of the repository in GitHub. Example: 'https://github.com/owner/repo.git'"
     Type: String
 
-  BranchName:
-    Default: BranchName
-    Description: the GitHub branch that will be monitored for builds (CASE SENSITIVE).
-    Type: String
+  #BranchName:
+  #  Default: master
+  #  Description: the GitHub branch that will be monitored for builds (CASE SENSITIVE).
+  #  Type: String
 
   CodeBuildBadgeEnabled:
     Type: String
@@ -35,23 +35,23 @@ Parameters:
     Description: The number of minutes before a CodeBuild build will timeout.
 
   # https://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli
-  CodeBuildEnvironment:
-    Type: String
-    Default: WINDOWS_CONTAINER
-    Description: The type of build environment.
-    AllowedValues:
-      - WINDOWS_CONTAINER
-      - LINUX_CONTAINER
+  #CodeBuildEnvironment:
+  #  Type: String
+  #  Default: WINDOWS_CONTAINER
+  #  Description: The type of build environment.
+  #  AllowedValues:
+  #    - WINDOWS_CONTAINER
+  #    - LINUX_CONTAINER
 
   # https://docs.aws.amazon.com/codebuild/latest/userguide/create-project.html#create-project-cli
-  CodeBuildComputeType:
-    Type: String
-    Default: BUILD_GENERAL1_MEDIUM
-    Description: The size of the CodeBuild instance. (Windows Containers do NOT support small)
-    AllowedValues:
-      - BUILD_GENERAL1_SMALL
-      - BUILD_GENERAL1_MEDIUM
-      - BUILD_GENERAL1_LARGE
+  #CodeBuildComputeType:
+  #  Type: String
+  #  Default: BUILD_GENERAL1_MEDIUM
+  #  Description: The size of the CodeBuild instance. (Windows Containers do NOT support small)
+  #  AllowedValues:
+  #    - BUILD_GENERAL1_SMALL
+  #    - BUILD_GENERAL1_MEDIUM
+  #    - BUILD_GENERAL1_LARGE
 
   # https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-available.html
   #CodeBuildImage:
@@ -97,14 +97,14 @@ Metadata:
           default: Specify GitHub Repository and Branch
         Parameters:
           - RepositoryUrl
-          - BranchName
+          #- BranchName
       - Label:
           default: CodeBuild
         Parameters:
           - CodeBuildBadgeEnabled
           - CodeBuildTimeoutInMinutes
-          - CodeBuildEnvironment
-          - CodeBuildComputeType
+          #- CodeBuildEnvironment
+          #- CodeBuildComputeType
           - BuildSpecFile
       - Label:
           default: Email Notifications
@@ -118,16 +118,16 @@ Metadata:
         default: Module Description
       RepositoryUrl:
         default: GitHub Repository URL
-      BranchName:
-        default: Branch Name
+      #BranchName:
+      #  default: Branch Name
       CodeBuildBadgeEnabled:
         default: Badge Enabled
       CodeBuildTimeoutInMinutes:
         default: Timeout in Minutes
-      CodeBuildEnvironment:
-        default: Container Type
-      CodeBuildComputeType:
-        default: Container Size
+      #CodeBuildEnvironment:
+      #  default: Container Type
+      #CodeBuildComputeType:
+      #  default: Container Size
       BuildSpecFile:
         default: Buildspec file
       DeployEmailNotifications:
@@ -140,7 +140,14 @@ Metadata:
 Conditions:
   DeployEmailNotificationsCondition:
     !Equals [!Ref DeployEmailNotifications, "yes"]
-  WindowsImage: !Equals [!Ref CodeBuildEnvironment, "WINDOWS_CONTAINER"]
+  PSWindows: !Equals [!Ref BuildSpecFile, "buildspec_powershell_windows.yml"]
+  PWSHWindows: !Equals [!Ref BuildSpecFile, "buildspec_pwsh_windows.yml"]
+  WindowsImage:
+    Fn::Or:
+    - Condition: PSWindows
+    - Condition: PWSHWindows
+  #LinuxImage: !Equals [!Ref BuildSpecFile, "buildspec_pwsh_linux.yml"]
+  #WindowsImage: !Equals [!Ref CodeBuildEnvironment, "WINDOWS_CONTAINER"]
 
 Resources:
   # The IAM Role CodeBuild will run the container as
@@ -190,15 +197,28 @@ Resources:
       BadgeEnabled: !Ref CodeBuildBadgeEnabled
       Description: !Ref ProjectDescription
       Environment:
-        ComputeType: !Ref CodeBuildComputeType
+        #ComputeType: !Ref CodeBuildComputeType
+        ComputeType:
+          !If
+          - WindowsImage
+          - BUILD_GENERAL1_MEDIUM
+          - BUILD_GENERAL1_SMALL
         Image:
           !If [
             WindowsImage,
             "aws/codebuild/windows-base:1.0",
             "aws/codebuild/dot-net:core-2.1",
           ]
-        Type: !Ref CodeBuildEnvironment
-      Name: !Ref ProjectName
+        #Type: !Ref CodeBuildEnvironment
+        Type:
+          !If
+          - WindowsImage
+          - WINDOWS_CONTAINER
+          - LINUX_CONTAINER
+      Name: !Join
+        - "-"
+        - - !Ref ProjectName
+          - !Select [0, !Split [".", !Ref BuildSpecFile]]
       ServiceRole: !GetAtt CodeBuildServiceRole.Arn
       Source:
         Type: GITHUB
@@ -214,9 +234,11 @@ Resources:
         Webhook: true
         FilterGroups:
           - - Type: EVENT
-              Pattern: PUSH, PULL_REQUEST_CREATED
-            - Type: HEAD_REF
-              Pattern: !Ref BranchName
+              Pattern: PUSH
+          - - Type: BASE_REF
+              Pattern: ^refs/heads/master$
+            - Type: EVENT
+              Pattern: PULL_REQUEST_CREATED,PULL_REQUEST_UPDATED
   #https://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-webhookfilter.html
 
   # An SNS Topic used for CodeBuild status updates
