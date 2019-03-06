@@ -164,8 +164,7 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource:
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeCommitRepositoryName}"
-                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/${CodeCommitRepositoryName}:*"
+                  - '*'
         - PolicyName: CodePipelineS3
           PolicyDocument:
             Version: "2012-10-17"

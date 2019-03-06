@@ -24,12 +24,12 @@
 
 <%
 If ($PLASTER_PARAM_S3Bucket -eq 'PSGallery') {
-@'
+    @'
 $galleryDownload = $true
 '@
 }
-else{
-@'
+else {
+    @'
 $galleryDownload = $false
 '@
 }
@@ -44,13 +44,13 @@ $VerbosePreference = 'SilentlyContinue'
 $modulesToInstall = [System.Collections.ArrayList]::new()
 $null = $modulesToInstall.Add(([PSCustomObject]@{
             ModuleName    = 'Pester'
-            ModuleVersion = '4.4.5'
+            ModuleVersion = '4.7.1'
             BucketName    = $PLASTER_PARAM_S3Bucket
             KeyPrefix     = ''
         }))
 $null = $modulesToInstall.Add(([PSCustomObject]@{
             ModuleName    = 'InvokeBuild'
-            ModuleVersion = '5.4.3'
+            ModuleVersion = '5.4.5'
             BucketName    = $PLASTER_PARAM_S3Bucket
             KeyPrefix     = ''
         }))
@@ -70,13 +70,14 @@ $null = $modulesToInstall.Add(([PSCustomObject]@{
 #install the correct version of AWSPowerShell module
 $tempPath = [System.IO.Path]::GetTempPath()
 if ($PSVersionTable.Platform -eq 'Win32NT') {
+    #Core-Windows
     $moduleInstallPath = [System.IO.Path]::Combine($env:ProgramFiles, 'WindowsPowerShell', 'Modules')
     if ($PSEdition -eq 'Core') {
         $moduleInstallPath = [System.IO.Path]::Combine($env:ProgramFiles, 'PowerShell', 'Modules')
         # Add the AWSPowerShell.NetCore Module
         $null = $modulesToInstall.Add(([PSCustomObject]@{
                     ModuleName    = 'AWSPowerShell.NetCore'
-                    ModuleVersion = '3.3.428.0'
+                    ModuleVersion = '3.3.462.0'
                     BucketName    = 'ps-invoke-modules'
                     KeyPrefix     = ''
                 }))
@@ -86,7 +87,7 @@ if ($PSVersionTable.Platform -eq 'Win32NT') {
         # Add the AWSPowerShell Module
         $null = $modulesToInstall.Add(([PSCustomObject]@{
                     ModuleName    = 'AWSPowerShell'
-                    ModuleVersion = '3.3.428.0'
+                    ModuleVersion = '3.3.462.0'
                     BucketName    = 'ps-invoke-modules'
                     KeyPrefix     = ''
                 }))
@@ -98,7 +99,17 @@ elseif ($PSVersionTable.Platform -eq 'Unix') {
     # Add the AWSPowerShell.NetCore Module
     $null = $modulesToInstall.Add(([PSCustomObject]@{
                 ModuleName    = 'AWSPowerShell.NetCore'
-                ModuleVersion = '3.3.428.0'
+                ModuleVersion = '3.3.462.0'
+                BucketName    = 'ps-invoke-modules'
+                KeyPrefix     = ''
+            }))
+}
+elseif ($PSEdition -eq 'Desktop') {
+    $moduleInstallPath = [System.IO.Path]::Combine($env:ProgramFiles, 'WindowsPowerShell', 'Modules')
+    # Add the AWSPowerShell Module
+    $null = $modulesToInstall.Add(([PSCustomObject]@{
+                ModuleName    = 'AWSPowerShell'
+                ModuleVersion = '3.3.462.0'
                 BucketName    = 'ps-invoke-modules'
                 KeyPrefix     = ''
             }))
@@ -147,7 +158,12 @@ else {
     }
     foreach ($module in $modulesToInstall) {
         try {
-            Install-Module $module.ModuleName -RequiredVersion $module.ModuleVersion -Repository PSGallery
+            if ($module.ModuleName -eq 'Pester') {
+                Install-Module $module.ModuleName -RequiredVersion $module.ModuleVersion -Repository PSGallery -Force -SkipPublisherCheck
+            }
+            else{
+                Install-Module $module.ModuleName -RequiredVersion $module.ModuleVersion -Repository PSGallery -ErrorAction Stop
+            }
         }
         catch {
             $message = 'Failed to install {0}' -f $module.ModuleName

@@ -8,14 +8,14 @@ phases:
   install:
     commands:
       - powershell -command '.\configure_aws_credential.ps1'
-      - powershell -command .\install_modules.ps1'
+      - powershell -command '.\install_modules.ps1'
   pre_build:
     commands:
       #- powershell -command 'New-Item -Path C:\Test -ItemType Directory | Out-Null'
       #- powershell -command 'Invoke-Build -File .\src\<%=$PLASTER_PARAM_ModuleName%>.build.Settings.ps1 -Task ValidateUniqueModuleVersion'
   build:
     commands:
-      - powershell -command Invoke-Build -File .\src\<%=$PLASTER_PARAM_ModuleName%>.build.ps1'
+      - powershell -command 'Invoke-Build -File .\src\<%=$PLASTER_PARAM_ModuleName%>.build.ps1'
 artifacts:
   files:
     - '**/*'
