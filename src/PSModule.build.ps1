@@ -193,7 +193,7 @@ task Test {
                 Write-Host -ForegroundColor Green '...Pester Unit Tests Complete!'
             }
         }
-        else{
+        else {
             # account for new module build condition
             Write-Host "Code coverage check skipped. No commands to execute." -ForegroundColor Magenta
         }
@@ -319,10 +319,13 @@ task UpdateCBH -Before Build {
 
 # Synopsis: Builds the Module to the Artifacts folder
 task Build {
-    Write-Host -NoNewLine "      Performing Module Build"
+    Write-Host "      Performing Module Build"
+
+    Write-Host '        Copying Module Manifest to Artifacts...'
     Copy-Item -Path $script:ModuleManifestFile -Destination $script:ArtifactsPath -Recurse -ErrorAction Stop
     #Copy-Item -Path $script:ModuleSourcePath\bin -Destination $script:ArtifactsPath -Recurse -ErrorAction Stop
 
+    Write-Host '        Merging Public and Private functions to one module file'
     #$private = "$script:ModuleSourcePath\Private"
     $scriptContent = [System.Text.StringBuilder]::new()
     #$powerShellScripts = Get-ChildItem -Path $script:ModuleSourcePath -Filter '*.ps1' -Recurse
@@ -332,15 +335,21 @@ task Build {
         $null = $scriptContent.AppendLine('')
         $null = $scriptContent.AppendLine('')
     }
-
     $scriptContent.ToString() | Out-File -FilePath $script:BuildModuleRootFile -Encoding utf8 -Force
 
+    Write-Host '        Cleaning up artifacts location'
     #cleanup artifacts that are no longer required
-    Remove-Item "$($script:ArtifactsPath)\Public" -Recurse -Force -ErrorAction Stop
-    Remove-Item "$($script:ArtifactsPath)\Private" -Recurse -Force -ErrorAction Stop
-    Write-Host -NoNewLine "      Overwriting docs output."
+    if (Test-Path "$($script:ArtifactsPath)\Public") {
+        Remove-Item "$($script:ArtifactsPath)\Public" -Recurse -Force -ErrorAction Stop
+    }
+    if (Test-Path "$($script:ArtifactsPath)\Private") {
+        Remove-Item "$($script:ArtifactsPath)\Private" -Recurse -Force -ErrorAction Stop
+    }
+
+    Write-Host "        Overwriting docs output"
     Move-Item "$($script:ArtifactsPath)\docs\*.md" -Destination "..\docs\" -Force
     Remove-Item "$($script:ArtifactsPath)\docs" -Recurse -Force -ErrorAction Stop
+
     Write-Host -ForegroundColor Green '...Build Complete!'
 }#Build
 
