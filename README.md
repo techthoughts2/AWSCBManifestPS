@@ -183,8 +183,10 @@ You can login to your AWS account and utilize these file to quickly create a sta
    * **GitHub**
      * The generated CFN template will guide you through the process. You will need a SEPERATE CodeBuild for each build type. So, if you wanted to build against all three platforms, you would deploy the template three times, specifying the desired buildspec for each stack deployment.
      * The following shows the GitHub CFN example: ![PowerShell CodeBuild CFN Example](media/PowerShell_CodeBuild_CFN_Example.PNG "PowerShell CodeBuild CFN Example")
+     * The GitHub process is not currently configured to generate artifacts. You are welcome to make adjustments to include them.
      * *Don't forget to copy your badge URL to display on your project*
    * **CodeCommit**
+     * The CodeCommit does include artifacts. Use the **S3BucketsForPowerShellDevelopment.yml** to quickly create the S3 bucket stack needed to store them.
      * The generated CFN template will guide you through the process. This CFN is different than the GitHub one in that you only need to deploy it once. This CFN will be dynamically altered based on your buildspec choice specified during the plaster process. If you choose all three, the CFN will deploy all required resources to support all three build types.
 
 7. Write a kick-ass module (the hardest part)
