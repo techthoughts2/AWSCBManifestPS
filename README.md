@@ -50,7 +50,7 @@ Rapidly scaffold module layout, required build files, and CloudFormation templat
 * [platyPS](https://github.com/PowerShell/platyPS)
 
     ```powershell
-    Install-Module -Name platyPS -Scope CurrentUser
+    Install-Module -Name platyPS -RequiredVersion 0.12.0 -Scope CurrentUser
     ```
 
 * [Invoke-Build](https://github.com/nightroman/Invoke-Build)

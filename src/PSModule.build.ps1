@@ -30,7 +30,7 @@ $ModuleName = (Split-Path -Path $BuildFile -Leaf).Split('.')[0]
 . "./$ModuleName.Settings.ps1"
 
 #Default Build
-task . Clean, ValidateRequirements, Analyze, Test, CreateHelp, Build, Archive
+task . Clean, ValidateRequirements, Analyze, Test, CreateHelpStart, Build, Archive
 
 #Local testing build process
 task TestLocal Clean, Analyze, Test
@@ -240,13 +240,14 @@ task DevCC {
 }#DevCC
 
 # Synopsis: Build help files for module
-task CreateHelp CreateMarkdownHelp, CreateExternalHelp, {
+task CreateHelpStart {
     Write-Host -NoNewLine '      Performing all help related actions.'
-    Write-Host -ForegroundColor Green '...CreateHelp Complete!'
-}#CreateHelp
+    Write-Host 'Importing platyPS v0.12.0'
+    Import-Module platyPS -RequiredVersion 0.12.0
+}#CreateHelpStart
 
 # Synopsis: Build help files for module and fail if help information is missing
-task CreateMarkdownHelp {
+task CreateMarkdownHelp -After CreateHelpStart {
     $ModulePage = "$($script:ArtifactsPath)\docs\$($ModuleName).md"
 
     $markdownParams = @{
@@ -292,11 +293,15 @@ task CreateMarkdownHelp {
 }#CreateMarkdownHelp
 
 # Synopsis: Build the external xml help file from markdown help files with PlatyPS
-task CreateExternalHelp {
+task CreateExternalHelp -After CreateMarkdownHelp{
     Write-Host -NoNewLine '      Creating external xml help file'
     $null = New-ExternalHelp "$($script:ArtifactsPath)\docs" -OutputPath "$($script:ArtifactsPath)\en-US\" -Force
     Write-Host -ForeGroundColor green '...Complete!'
 }#CreateExternalHelp
+
+task CreateHelpComplete -After CreateExternalHelp {
+    Write-Host -ForegroundColor Green '...CreateHelp Complete!'
+}#CreateHelpStart
 
 # Synopsis: Replace comment based help (CBH) with external help in all public functions for this project
 task UpdateCBH -Before Build {
