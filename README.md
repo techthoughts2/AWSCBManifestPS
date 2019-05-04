@@ -27,8 +27,9 @@ This template will prompt with a few options and will then perform the following
 * Creates CloudFormation templates that you can use to quickly create a stack for your build process
 
 This template currently supports two repository sources that the user can specify when invoking the template:
- * [GitHub](https://github.com/)
- * [AWS CodeCommit](https://aws.amazon.com/codecommit/)
+
+* [GitHub](https://github.com/)
+* [AWS CodeCommit](https://aws.amazon.com/codecommit/)
 
 ## Why
 
@@ -64,6 +65,7 @@ Rapidly scaffold module layout, required build files, and CloudFormation templat
     ```powershell
     Install-Module -Name Pester -Force
     ```
+
 * [Create and activate an Amazon Web Services account](https://aws.amazon.com/premiumsupport/knowledge-center/create-and-activate-aws-account/)
 
 ### Install AWSCBManifestPS
@@ -150,7 +152,6 @@ You can login to your AWS account and utilize these file to quickly create a sta
 
 | Windows PowerShell  | Windows pwsh | Linux pwsh |
 | ------------- | ------------- | ------------- |
-
 
 1. Invoke the template by specifying the location of the template, as well as the destination of where you'd like to create your new module.
 
@@ -248,3 +249,7 @@ Have some diagrams:
 ## License
 
 This project is [licensed under the MIT License](LICENSE).
+
+## Changelog
+
+Reference the [Changelog](.github/CHANGELOG.md)

@@ -18,8 +18,12 @@
       <choice label='&amp;AWS CodeCommit' help="Hosted on AWS CodeCommit." value="CC"/>
     </parameter>
     <parameter name='GitIgnore' type='choice' default='0' store='text' prompt='Would you like to generate a .gitignore file?'>
-      <choice label='&amp;gitignore' help="Adds a.gitignore file." value="GIT"/>
-      <choice label='&amp;None' help="Does not add a.gitignore file." value="NOGIT"/>
+      <choice label='&amp;gitignore' help="Adds a .gitignore file." value="GIT"/>
+      <choice label='&amp;None' help="Does not add a .gitignore file." value="NOGIT"/>
+    </parameter>
+    <parameter name='Changelog' type='choice' default='0' store='text' prompt='Would you like to generate a Changelog file?'>
+      <choice label='&amp;changelog' help="Adds a Changelog file." value="CHANGELOG"/>
+      <choice label='&amp;None' help="Does not add a Changelog file." value="NOCHANGELOG"/>
     </parameter>
     <parameter name='S3Bucket' type='text' prompt='Enter S3 bucket name to download needed PS modules from S3 location. Leave blank to DL modules from PSGallery.' default='PSGallery'/>
     <parameter name='Options' type='multichoice' default='1,2' store='text' prompt='Select desired buildpsec file options?'>
@@ -65,6 +69,8 @@
     <file source='CloudFormation\S3BucketsForPowerShellDevelopment.yml' destination='CloudFormation\S3BucketsForPowerShellDevelopment.yml'/>
 
     <file condition="$PLASTER_PARAM_GitIgnore -eq 'GIT'" source='.gitignore' destination='.gitignore' />
+    <templateFile condition="$PLASTER_PARAM_Changelog -eq 'CHANGELOG'" source='GitFiles\CHANGELOG.md' destination='.github\CHANGELOG.md' />
+
     <templateFile condition="$PLASTER_PARAM_Options -eq 'ps'" source='buildspec_powershell_windows.yml' destination='buildspec_powershell_windows.yml' />
     <templateFile condition="$PLASTER_PARAM_Options -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
     <templateFile condition="$PLASTER_PARAM_Options -eq 'pwsh'" source='buildspec_pwsh_linux.yml' destination='buildspec_pwsh_linux.yml' />
