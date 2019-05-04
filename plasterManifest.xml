@@ -5,14 +5,15 @@
     <name>AWSCBManifestPS</name>
     <id>83670531-579c-4a4c-a70a-ddc60eaefa40</id>
     <version>0.8.5</version>
-    <title>New PowerShell Module for AWS CB</title>
+    <title>PowerShell Module Template for AWS CodeBuild</title>
     <description>Scaffolds a new PowerShell module project intended for CI/CD workflow using AWS CodeBuild</description>
     <author>Jake Morrison</author>
-    <tags>AWS,PowerShell,CodeBuild,PowerShell Module,Build</tags>
+    <tags>PowerShell,Template,CodeBuild,PowerShell Module,AWS</tags>
   </metadata>
   <parameters>
     <parameter name='ModuleName' type='text' prompt='Enter the name of the module'/>
     <parameter name='Version' type='text' prompt='Enter the version number of the module' default='0.0.1'/>
+    <parameter name='FN' type='user-fullname' store='text' prompt='Enter your full name'/>
     <parameter name='RepoType' type='choice' default='0' store='text' prompt='Where will this project be hosted?'>
       <choice label='&amp;GitHub ' help="Hosted on GitHub." value="GITHUB"/>
       <choice label='&amp;AWS CodeCommit' help="Hosted on AWS CodeCommit." value="CC"/>
@@ -25,20 +26,19 @@
       <choice label='&amp;changelog' help="Adds a Changelog file." value="CHANGELOG"/>
       <choice label='&amp;None' help="Does not add a Changelog file." value="NOCHANGELOG"/>
     </parameter>
+    <parameter name='License' type='choice' default='0' store='text' prompt='Select a License for your module. (Help deciding: https://choosealicense.com/)'>
+      <choice label='&amp;MIT' help='Adds a MIT License file.' value='MIT'/>
+      <choice label='&amp;Apache' help='Adds an Apache License file.' value="Apache"/>
+      <choice label='&amp;GNU' help='Adds a GNU GENERAL PUBLIC LICENSE file.' value="GNU"/>
+      <choice label='&amp;ISC' help='Adds an ISC License file.' value="ISC"/>
+      <choice label='&amp;None' help='Does not add a License file.' value='None'/>
+    </parameter>
     <parameter name='S3Bucket' type='text' prompt='Enter S3 bucket name to download needed PS modules from S3 location. Leave blank to DL modules from PSGallery.' default='PSGallery'/>
     <parameter name='Options' type='multichoice' default='1,2' store='text' prompt='Select desired buildpsec file options?'>
-      <choice label='&amp;Windows - PowerShell'
-              help="Adds a powershell focused buildspec.yml for Windows CodeBuild."
-              value="ps"/>
-      <choice label='&amp;Core (Windows)- pwsh'
-              help="Adds a pwsh focused buildspec.yml for Windows CodeBuild."
-              value="pwshcore"/>
-      <choice label='&amp;Linux - pwsh'
-              help="Adds a pwsh focused buildspec.yml for Linux CodeBuild."
-              value="pwsh"/>
-      <choice label='&amp;None'
-              help="Does not add a buildspec file."
-              value="None"/>
+      <choice label='&amp;Windows - PowerShell' help="Adds a powershell focused buildspec.yml for Windows CodeBuild." value="ps"/>
+      <choice label='&amp;Core (Windows)- pwsh' help="Adds a pwsh focused buildspec.yml for Windows CodeBuild." value="pwshcore"/>
+      <choice label='&amp;Linux - pwsh' help="Adds a pwsh focused buildspec.yml for Linux CodeBuild." value="pwsh"/>
+      <choice label='&amp;None' help="Does not add a buildspec file." value="None"/>
     </parameter>
   </parameters>
   <content>
@@ -70,6 +70,10 @@
 
     <file condition="$PLASTER_PARAM_GitIgnore -eq 'GIT'" source='.gitignore' destination='.gitignore' />
     <templateFile condition="$PLASTER_PARAM_Changelog -eq 'CHANGELOG'" source='GitFiles\CHANGELOG.md' destination='.github\CHANGELOG.md' />
+    <templateFile condition="$PLASTER_PARAM_License -eq 'MIT'" source='GitFiles\MITLICENSE.txt' destination='.github\LICENSE.txt' />
+    <templateFile condition="$PLASTER_PARAM_License -eq 'Apache'" source='GitFiles\APACHELICENSE.txt' destination='.github\LICENSE.txt' />
+    <templateFile condition="$PLASTER_PARAM_License -eq 'GNU'" source='GitFiles\GNULICENSE.txt' destination='.github\LICENSE.txt' />
+    <templateFile condition="$PLASTER_PARAM_License -eq 'ISC'" source='GitFiles\ISCLICENSE.txt' destination='.github\LICENSE.txt' />
 
     <templateFile condition="$PLASTER_PARAM_Options -eq 'ps'" source='buildspec_powershell_windows.yml' destination='buildspec_powershell_windows.yml' />
     <templateFile condition="$PLASTER_PARAM_Options -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
@@ -78,7 +82,7 @@
     <templateFile condition="$PLASTER_PARAM_RepoType -eq 'GITHUB'" source='CloudFormation\PowerShellCodeBuildGit.yml' destination='CloudFormation\PowerShellCodeBuildGit.yml'/>
     <templateFile condition="$PLASTER_PARAM_RepoType -eq 'CC'" source='CloudFormation\PowerShellCodeBuildCC.yml' destination='CloudFormation\PowerShellCodeBuildCC.yml'/>
 
-    <newModuleManifest destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1' moduleVersion='$PLASTER_PARAM_Version' rootModule='${PLASTER_PARAM_ModuleName}.psm1' encoding='UTF8-NoBOM' openInEditor="true"/>
+    <newModuleManifest destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psd1' moduleVersion='$PLASTER_PARAM_Version' rootModule='${PLASTER_PARAM_ModuleName}.psm1' encoding='UTF8-NoBOM' openInEditor="true" author='$PLASTER_PARAM_FN'/>
     <file source='Module.psm1' destination='src\${PLASTER_PARAM_ModuleName}\${PLASTER_PARAM_ModuleName}.psm1' openInEditor="true"/>
 
 

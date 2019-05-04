@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added License file option
 - Updated all references to platyPS to explicitly use v.0.12.0 of platyPS
-- Added Changelog
+- Added Changelog file option
 - Added GitHub community files:
   - Code of Conduct
   - Contributing document
