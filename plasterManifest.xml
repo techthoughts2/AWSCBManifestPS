@@ -33,6 +33,10 @@
       <choice label='&amp;ISC' help='Adds an ISC License file.' value="ISC"/>
       <choice label='&amp;None' help='Does not add a License file.' value='None'/>
     </parameter>
+    <parameter name='COC' type='choice' default='0' store='text' prompt='Would you like to generate a Code of Conduct file?'>
+      <choice label='&amp;conduct' help="Adds a Code of Conduct file." value="CONDUCT"/>
+      <choice label='&amp;None' help="Does not add a Changelog file." value="NOCONDUCT"/>
+    </parameter>
     <parameter name='S3Bucket' type='text' prompt='Enter S3 bucket name to download needed PS modules from S3 location. Leave blank to DL modules from PSGallery.' default='PSGallery'/>
     <parameter name='Options' type='multichoice' default='1,2' store='text' prompt='Select desired buildpsec file options?'>
       <choice label='&amp;Windows - PowerShell' help="Adds a powershell focused buildspec.yml for Windows CodeBuild." value="ps"/>
@@ -74,6 +78,7 @@
     <templateFile condition="$PLASTER_PARAM_License -eq 'Apache'" source='GitFiles\APACHELICENSE.txt' destination='.github\LICENSE.txt' />
     <templateFile condition="$PLASTER_PARAM_License -eq 'GNU'" source='GitFiles\GNULICENSE.txt' destination='.github\LICENSE.txt' />
     <templateFile condition="$PLASTER_PARAM_License -eq 'ISC'" source='GitFiles\ISCLICENSE.txt' destination='.github\LICENSE.txt' />
+    <file condition="$PLASTER_PARAM_COC -eq 'CONDUCT'" source='GitFiles\CODE_OF_CONDUCT.md' destination='.github\CODE_OF_CONDUCT.md' />
 
     <templateFile condition="$PLASTER_PARAM_Options -eq 'ps'" source='buildspec_powershell_windows.yml' destination='buildspec_powershell_windows.yml' />
     <templateFile condition="$PLASTER_PARAM_Options -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
