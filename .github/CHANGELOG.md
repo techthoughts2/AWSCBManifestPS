@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added Contributing file option
 - Adjusted build file to reference PSScriptAnalyzerSettings file
 - Added PSScriptAnalyzerSettings.psd1 default Script Analyzer settings file
 - Added option for specifying PowerShell coding style

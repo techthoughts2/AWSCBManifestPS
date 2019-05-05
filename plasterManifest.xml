@@ -19,7 +19,7 @@
       <choice label='&amp;AWS CodeCommit' help="Hosted on AWS CodeCommit." value="CC"/>
     </parameter>
     <parameter name='Changelog' type='choice' default='0' store='text' prompt='Would you like to generate a Changelog file?'>
-      <choice label='&amp;changelog' help="Adds a Changelog file." value="CHANGELOG"/>
+      <choice label='&amp;Changelog' help="Adds a Changelog file." value="CHANGELOG"/>
       <choice label='&amp;None' help="Does not add a Changelog file." value="NOCHANGELOG"/>
     </parameter>
     <parameter name='License' type='choice' default='0' store='text' prompt='Select a License for your module. (Help deciding: https://choosealicense.com/)'>
@@ -32,6 +32,10 @@
     <parameter name='COC' type='choice' default='0' store='text' prompt='Would you like to generate a Code of Conduct file?'>
       <choice label='&amp;conduct' help="Adds a Code of Conduct file." value="CONDUCT"/>
       <choice label='&amp;None' help="Does not add a Changelog file." value="NOCONDUCT"/>
+    </parameter>
+    <parameter name='Contribute' type='choice' default='0' store='text' prompt='Would you like to generate a Contributing guidelines file?'>
+      <choice label='&amp;Contribute' help="Adds a Contributing file." value="CONTRIBUTING"/>
+      <choice label='&amp;None' help="Does not add a Contributing file." value="NOCONTRIBUTING"/>
     </parameter>
     <parameter name='CodingStyle' type='choice' default='0' store='text' prompt='Would you like to specify a coding style for the project?'>
       <choice label='&amp;Stroustrup' help="Adds a Code of Conduct file." value="Stroustrup"/>
@@ -84,6 +88,7 @@
     <templateFile condition="$PLASTER_PARAM_License -eq 'GNU'" source='GitFiles\GNULICENSE.txt' destination='.github\LICENSE.txt' />
     <templateFile condition="$PLASTER_PARAM_License -eq 'ISC'" source='GitFiles\ISCLICENSE.txt' destination='.github\LICENSE.txt' />
     <file condition="$PLASTER_PARAM_COC -eq 'CONDUCT'" source='GitFiles\CODE_OF_CONDUCT.md' destination='.github\CODE_OF_CONDUCT.md' />
+    <templateFile condition="$PLASTER_PARAM_Contribute -eq 'CONTRIBUTING'" source='GitFiles\CONTRIBUTING.md' destination='.github\CONTRIBUTING.md' />
 
     <templateFile condition="$PLASTER_PARAM_Options -eq 'ps'" source='buildspec_powershell_windows.yml' destination='buildspec_powershell_windows.yml' />
     <templateFile condition="$PLASTER_PARAM_Options -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
