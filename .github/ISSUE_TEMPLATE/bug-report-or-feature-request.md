@@ -1,4 +1,11 @@
-# Issues Template
+---
+name: Bug report or feature request
+about: Submit a new bug or feature request
+title: Bug report or feature request
+labels: ''
+assignees: ''
+
+---
 
 **Steps to reproduce**
 *If you're describing a bug, provide steps to reproduce.*
