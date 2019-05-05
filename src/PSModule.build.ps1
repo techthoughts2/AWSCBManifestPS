@@ -7,6 +7,7 @@
     Build steps can include:
         - Clean
         - ValidateRequirements
+        - Format
         - Analyze
         - Test
         - CreateHelp
@@ -82,7 +83,7 @@ task ValidateRequirements {
 
 #Synopsis: Clean Artifacts Directory
 task Clean {
-    Write-Host "      Clean up our Artifacts/Archive directory"
+    Write-Host '      Clean up our Artifacts/Archive directory'
 
     $null = Remove-Item $script:ArtifactsPath -Force -Recurse -ErrorAction 0
     $null = New-Item $script:ArtifactsPath -ItemType:Directory
@@ -100,8 +101,9 @@ task Clean {
     #>
 }#Clean
 
+#Synopsis: Verifies if public and private functions adhere to your specified coding format (Stroustrup / OTBS / Allman)
 task Format {
-    Write-Host "      Performing code styling checks"
+    Write-Host '      Performing code styling checks'
     #Copy-Item -Path "$script:ModuleSourcePath\*" -Destination $script:ArtifactsPath -Exclude *.psd1, *.psm1 -Recurse -ErrorAction Stop
     $a = Get-ChildItem -Path $script:ModuleSourcePath -Exclude *.psd1, *.psm1 -Recurse -ErrorAction Stop | Where-Object { -not $_.PSIsContainer }
     foreach ($file in $a) {
@@ -118,7 +120,7 @@ task Format {
 
 #Synopsis: Invokes Script Analyzer against the Module source path
 task Analyze {
-    Write-Host "      Performing Module ScriptAnalyzer checks"
+    Write-Host '      Performing Module ScriptAnalyzer checks'
     $scriptAnalyzerParams = @{
         Path    = $script:ModuleSourcePath
         Setting = "PSScriptAnalyzerSettings.psd1"
@@ -140,7 +142,7 @@ task Analyze {
 #Synopsis: Invokes Script Analyzer against the Tests path if it exists
 task AnalyzeTests -After Analyze {
     if (Test-Path -Path $script:TestsPath) {
-        Write-Host "      Performing Test ScriptAnalyzer checks"
+        Write-Host '      Performing Test ScriptAnalyzer checks'
         $scriptAnalyzerParams = @{
             Path    = $script:TestsPath
             Setting = "PSScriptAnalyzerSettings.psd1"
@@ -167,7 +169,7 @@ task Test {
         New-Item -Path $codeCovPath -ItemType Directory | Out-Null
     }
     if (Test-Path -Path $script:UnitTestsPath) {
-        Write-Host -NoNewLine "      Performing Pester Unit Tests"
+        Write-Host -NoNewLine '      Performing Pester Unit Tests'
         $invokePesterParams = @{
             Path                         = 'Tests\Unit'
             Strict                       = $true
@@ -216,12 +218,12 @@ task Test {
         }
         else {
             # account for new module build condition
-            Write-Host "Code coverage check skipped. No commands to execute." -ForegroundColor Magenta
+            Write-Host 'Code coverage check skipped. No commands to execute.' -ForegroundColor Magenta
         }
 
     }
     if (Test-Path -Path $script:InfraTestsPath) {
-        Write-Host -NoNewLine "      Performing Pester Infrastructure Tests"
+        Write-Host '      Performing Pester Infrastructure Tests'
         $invokePesterParams = @{
             Path       = '..\..\Tests\Infrastructure'
             Strict     = $true

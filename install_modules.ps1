@@ -50,13 +50,13 @@ $null = $modulesToInstall.Add(([PSCustomObject]@{
         }))
 $null = $modulesToInstall.Add(([PSCustomObject]@{
             ModuleName    = 'InvokeBuild'
-            ModuleVersion = '5.4.5'
+            ModuleVersion = '5.5.1'
             BucketName    = $PLASTER_PARAM_S3Bucket
             KeyPrefix     = ''
         }))
 $null = $modulesToInstall.Add(([PSCustomObject]@{
             ModuleName    = 'PSScriptAnalyzer'
-            ModuleVersion = '1.17.1'
+            ModuleVersion = '1.18.0'
             BucketName    = $PLASTER_PARAM_S3Bucket
             KeyPrefix     = ''
         }))
@@ -77,7 +77,7 @@ if ($PSVersionTable.Platform -eq 'Win32NT') {
         # Add the AWSPowerShell.NetCore Module
         $null = $modulesToInstall.Add(([PSCustomObject]@{
                     ModuleName    = 'AWSPowerShell.NetCore'
-                    ModuleVersion = '3.3.462.0'
+                    ModuleVersion = '3.3.498.0'
                     BucketName    = 'ps-invoke-modules'
                     KeyPrefix     = ''
                 }))
@@ -87,7 +87,7 @@ if ($PSVersionTable.Platform -eq 'Win32NT') {
         # Add the AWSPowerShell Module
         $null = $modulesToInstall.Add(([PSCustomObject]@{
                     ModuleName    = 'AWSPowerShell'
-                    ModuleVersion = '3.3.462.0'
+                    ModuleVersion = '3.3.498.0'
                     BucketName    = 'ps-invoke-modules'
                     KeyPrefix     = ''
                 }))
@@ -99,7 +99,7 @@ elseif ($PSVersionTable.Platform -eq 'Unix') {
     # Add the AWSPowerShell.NetCore Module
     $null = $modulesToInstall.Add(([PSCustomObject]@{
                 ModuleName    = 'AWSPowerShell.NetCore'
-                ModuleVersion = '3.3.462.0'
+                ModuleVersion = '3.3.498.0'
                 BucketName    = 'ps-invoke-modules'
                 KeyPrefix     = ''
             }))
@@ -109,7 +109,7 @@ elseif ($PSEdition -eq 'Desktop') {
     # Add the AWSPowerShell Module
     $null = $modulesToInstall.Add(([PSCustomObject]@{
                 ModuleName    = 'AWSPowerShell'
-                ModuleVersion = '3.3.462.0'
+                ModuleVersion = '3.3.498.0'
                 BucketName    = 'ps-invoke-modules'
                 KeyPrefix     = ''
             }))
@@ -161,7 +161,7 @@ else {
             if ($module.ModuleName -eq 'Pester') {
                 Install-Module $module.ModuleName -RequiredVersion $module.ModuleVersion -Repository PSGallery -Force -SkipPublisherCheck
             }
-            else{
+            else {
                 Install-Module $module.ModuleName -RequiredVersion $module.ModuleVersion -Repository PSGallery -ErrorAction Stop
             }
         }

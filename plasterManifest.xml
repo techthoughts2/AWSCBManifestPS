@@ -89,6 +89,8 @@
     <templateFile condition="$PLASTER_PARAM_License -eq 'ISC'" source='GitFiles\ISCLICENSE.txt' destination='.github\LICENSE.txt' />
     <file condition="$PLASTER_PARAM_COC -eq 'CONDUCT'" source='GitFiles\CODE_OF_CONDUCT.md' destination='.github\CODE_OF_CONDUCT.md' />
     <templateFile condition="$PLASTER_PARAM_Contribute -eq 'CONTRIBUTING'" source='GitFiles\CONTRIBUTING.md' destination='.github\CONTRIBUTING.md' />
+    <file condition="$PLASTER_PARAM_RepoType -eq 'GITHUB'" source='GitFiles\PULL_REQUEST_TEMPLATE.md' destination='.github\PULL_REQUEST_TEMPLATE.md'/>
+    <file condition="$PLASTER_PARAM_RepoType -eq 'GITHUB'" source='GitFiles\ISSUE_TEMPLATE\bug-report-or-feature-request.md' destination='.github\ISSUE_TEMPLATE\bug-report-or-feature-request.md'/>
 
     <templateFile condition="$PLASTER_PARAM_Options -eq 'ps'" source='buildspec_powershell_windows.yml' destination='buildspec_powershell_windows.yml' />
     <templateFile condition="$PLASTER_PARAM_Options -eq 'pwshcore'" source='buildspec_pwsh_windows.yml' destination='buildspec_pwsh_windows.yml' />
@@ -102,6 +104,7 @@
 
 
     <requireModule name="Pester" minimumVersion="4.7.2" message="Without Pester, you will not be able to run the provided Pester test to validate your module manifest file.`nWithout version 4.5.0, VS Code will not display Pester warnings and errors in the Problems panel."/>
+    <requireModule name="InvokeBuild" minimumVersion="5.4.2" message="Without InvokeBuild, you will not be able to run local builds."/>
     <requireModule name="platyPS" requiredVersion ="0.12.0" message="This template requires platyPS v0.12.0 module to properly generate help."/>
 
     <message>

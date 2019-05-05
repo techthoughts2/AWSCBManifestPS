@@ -17,7 +17,7 @@ Describe 'Module Tests' -Tag Unit {
         }#psm1Exists
         It 'manifest should contain <%=$PLASTER_PARAM_ModuleName%>.psm1' {
             $PathToManifest |
-                Should -FileContentMatchExactly "<%=$PLASTER_PARAM_ModuleName%>.psm1"
+            Should -FileContentMatchExactly "<%=$PLASTER_PARAM_ModuleName%>.psm1"
         }#validPSM1
     }#context_ModuleTests
 }#describe_ModuleTests

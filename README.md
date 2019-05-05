@@ -89,10 +89,19 @@ Invoke-Plaster -TemplatePath C:\test\AWSCBManifestPS\ -DestinationPath C:\Test\G
 ==================================================
 Enter the name of the module: GreatPSModule
 Enter the version number of the module (0.0.1):
+Enter your full name (First Last):
 Where will this project be hosted?
 [G] GitHub  [A] AWS CodeCommit  [?] Help (default is "G"):
-Would you like to generate a .gitignore file?
-[G] gitignore  [N] None  [?] Help (default is "G"):
+Would you like to generate a Changelog file?
+[C] Changelog  [N] None  [?] Help (default is "C"):
+Select a License for your module. (Help deciding: https://choosealicense.com/)
+[M] MIT  [A] Apache  [G] GNU  [I] ISC  [N] None  [?] Help (default is "M"):
+Would you like to generate a Code of Conduct file?
+[C] conduct  [N] None  [?] Help (default is "C"):
+Would you like to generate a Contributing guidelines file?
+[C] Contribute  [N] None  [?] Help (default is "C"):
+Would you like to specify a coding style for the project?
+[S] Stroustrup  [O] OTBS  [A] Allman  [N] None  [?] Help (default is "S"):
 Enter S3 bucket name to download needed PS modules from S3 location. Leave blank to DL modules from PSGallery. (PSGallery):
 Select desired buildpsec file options?
 [W] Windows - PowerShell
@@ -104,7 +113,7 @@ Select desired buildpsec file options?
 Choice[0]:
 Destination path: C:\rs-pkgs\test\plastertest\
 
-Scaffolding your PowerShell Module for AWS CB...
+Scaffolding your PowerShell Module for AWS CodeBuild...
 
    Create docs\
    Create media\
@@ -119,15 +128,23 @@ Scaffolding your PowerShell Module for AWS CB...
    Create src\GreatPSModule\Public\
    Create src\GreatPSModule\Private\
    Create .vscode\tasks.json
+   Create .vscode\extensions.json
    Create .vscode\settings.json
    Create src\Tests\Unit\GreatPSModule-Module.Tests.ps1
    Create src\Tests\Unit\ExportedFunctions.Tests.ps1
    Create src\Tests\Unit\GreatPSModule-Function.Tests.ps1
    Create src\GreatPSModule.build.ps1
    Create src\GreatPSModule.Settings.ps1
+   Create src\PSScriptAnalyzerSettings.psd1
    Create configure_aws_credential.ps1
    Create CloudFormation\S3BucketsForPowerShellDevelopment.yml
    Create .gitignore
+   Create .github\CHANGELOG.md
+   Create .github\LICENSE.txt
+   Create .github\CODE_OF_CONDUCT.md
+   Create .github\CONTRIBUTING.md
+   Create .github\PULL_REQUEST_TEMPLATE.md
+   Create .github\ISSUE_TEMPLATE\bug-report-or-feature-request.md
    Create buildspec_powershell_windows.yml
    Create buildspec_pwsh_windows.yml
    Create buildspec_pwsh_linux.yml
@@ -136,6 +153,8 @@ Scaffolding your PowerShell Module for AWS CB...
    Create src\GreatPSModule\GreatPSModule.psd1
    Create src\GreatPSModule\GreatPSModule.psm1
    Verify The required module Pester (minimum version: 4.7.2) is already installed.
+   Verify The required module InvokeBuild (minimum version: 5.4.2) is already installed.
+   Verify The required module platyPS (required version: 0.12.0) is already installed.
 
 Your new PowerShell module project 'GreatPSModule' has been created.
 

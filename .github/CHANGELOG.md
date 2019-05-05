@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added issues and PR templates for github
+- Added InvokeBuild as a required module
+- Bumped module version references
 - Added Contributing file option
 - Adjusted build file to reference PSScriptAnalyzerSettings file
 - Added PSScriptAnalyzerSettings.psd1 default Script Analyzer settings file
