@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0]
+
 - Added issues and PR templates for github
 - Added InvokeBuild as a required module
 - Bumped module version references

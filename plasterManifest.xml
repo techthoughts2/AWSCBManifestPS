@@ -4,7 +4,7 @@
   <metadata>
     <name>AWSCBManifestPS</name>
     <id>83670531-579c-4a4c-a70a-ddc60eaefa40</id>
-    <version>0.8.5</version>
+    <version>0.9.0</version>
     <title>PowerShell Module Template for AWS CodeBuild</title>
     <description>Scaffolds a new PowerShell module project intended for CI/CD workflow using AWS CodeBuild</description>
     <author>Jake Morrison</author>
