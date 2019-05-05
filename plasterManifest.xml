@@ -18,10 +18,6 @@
       <choice label='&amp;GitHub ' help="Hosted on GitHub." value="GITHUB"/>
       <choice label='&amp;AWS CodeCommit' help="Hosted on AWS CodeCommit." value="CC"/>
     </parameter>
-    <parameter name='GitIgnore' type='choice' default='0' store='text' prompt='Would you like to generate a .gitignore file?'>
-      <choice label='&amp;gitignore' help="Adds a .gitignore file." value="GIT"/>
-      <choice label='&amp;None' help="Does not add a .gitignore file." value="NOGIT"/>
-    </parameter>
     <parameter name='Changelog' type='choice' default='0' store='text' prompt='Would you like to generate a Changelog file?'>
       <choice label='&amp;changelog' help="Adds a Changelog file." value="CHANGELOG"/>
       <choice label='&amp;None' help="Does not add a Changelog file." value="NOCHANGELOG"/>
@@ -37,6 +33,12 @@
       <choice label='&amp;conduct' help="Adds a Code of Conduct file." value="CONDUCT"/>
       <choice label='&amp;None' help="Does not add a Changelog file." value="NOCONDUCT"/>
     </parameter>
+    <parameter name='CodingStyle' type='choice' default='0' store='text' prompt='Would you like to specify a coding style for the project?'>
+      <choice label='&amp;Stroustrup' help="Adds a Code of Conduct file." value="Stroustrup"/>
+      <choice label='&amp;OTBS' help="Adds a Code of Conduct file." value="OTBS"/>
+      <choice label='&amp;Allman' help="Does not add a Changelog file." value="Allman"/>
+      <choice label='&amp;None' help="Does not add a Changelog file." value="None"/>
+    </parameter>
     <parameter name='S3Bucket' type='text' prompt='Enter S3 bucket name to download needed PS modules from S3 location. Leave blank to DL modules from PSGallery.' default='PSGallery'/>
     <parameter name='Options' type='multichoice' default='1,2' store='text' prompt='Select desired buildpsec file options?'>
       <choice label='&amp;Windows - PowerShell' help="Adds a powershell focused buildspec.yml for Windows CodeBuild." value="ps"/>
@@ -46,7 +48,7 @@
     </parameter>
   </parameters>
   <content>
-    <message>&#10;&#10;Scaffolding your PowerShell Module for AWS CB...&#10;&#10;&#10;</message>
+    <message>&#10;&#10;Scaffolding your PowerShell Module for AWS CodeBuild...&#10;&#10;&#10;</message>
     <file source='' destination='docs'/>
     <file source='' destination='media'/>
     <file source='' destination='src'/>
@@ -60,19 +62,22 @@
     <file source='' destination='src\${PLASTER_PARAM_ModuleName}\Public'/>
     <file source='' destination='src\${PLASTER_PARAM_ModuleName}\Private'/>
     <file source='editor\VSCode\tasks.json' destination='.vscode\tasks.json' />
-    <file source='editor\VSCode\settings.json' destination='.vscode\settings.json' />
+    <file source='editor\VSCode\extensions.json' destination='.vscode\extensions.json' />
+    <templateFile source='editor\VSCode\settings.json' destination='.vscode\settings.json' />
 
     <templateFile source='src\test\PSModule-Module.Tests.ps1' destination='src\Tests\Unit\${PLASTER_PARAM_ModuleName}-Module.Tests.ps1' />
     <templateFile source='src\test\ExportedFunctions.Tests.ps1' destination='src\Tests\Unit\ExportedFunctions.Tests.ps1' />
     <templateFile source='src\test\Module-Function.Tests.ps1' destination='src\Tests\Unit\${PLASTER_PARAM_ModuleName}-Function.Tests.ps1' />
 
-    <file source='src\PSModule.build.ps1' destination='src\${PLASTER_PARAM_ModuleName}.build.ps1'/>
+    <templateFile source='src\PSModule.build.ps1' destination='src\${PLASTER_PARAM_ModuleName}.build.ps1'/>
     <file source='src\PSModule.Settings.ps1' destination='src\${PLASTER_PARAM_ModuleName}.Settings.ps1'/>
+    <file source='src\PSScriptAnalyzerSettings.psd1' destination='src\PSScriptAnalyzerSettings.psd1'/>
+
     <file source='configure_aws_credential.ps1' destination='configure_aws_credential.ps1'/>
 
     <file source='CloudFormation\S3BucketsForPowerShellDevelopment.yml' destination='CloudFormation\S3BucketsForPowerShellDevelopment.yml'/>
 
-    <file condition="$PLASTER_PARAM_GitIgnore -eq 'GIT'" source='.gitignore' destination='.gitignore' />
+    <file source='.gitignore' destination='.gitignore' />
     <templateFile condition="$PLASTER_PARAM_Changelog -eq 'CHANGELOG'" source='GitFiles\CHANGELOG.md' destination='.github\CHANGELOG.md' />
     <templateFile condition="$PLASTER_PARAM_License -eq 'MIT'" source='GitFiles\MITLICENSE.txt' destination='.github\LICENSE.txt' />
     <templateFile condition="$PLASTER_PARAM_License -eq 'Apache'" source='GitFiles\APACHELICENSE.txt' destination='.github\LICENSE.txt' />

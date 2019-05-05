@@ -30,7 +30,18 @@ $ModuleName = (Split-Path -Path $BuildFile -Leaf).Split('.')[0]
 . "./$ModuleName.Settings.ps1"
 
 #Default Build
+<%
+If ($PLASTER_PARAM_CodingStyle -ne 'None') {
+    @'
+task . Clean, ValidateRequirements, Format, Analyze, Test, CreateHelpStart, Build, Archive
+'@
+}
+else {
+    @'
 task . Clean, ValidateRequirements, Analyze, Test, CreateHelpStart, Build, Archive
+'@
+}
+%>
 
 #Local testing build process
 task TestLocal Clean, Analyze, Test
@@ -71,7 +82,7 @@ task ValidateRequirements {
 
 #Synopsis: Clean Artifacts Directory
 task Clean {
-    Write-Host -NoNewLine "      Clean up our Artifacts/Archive directory"
+    Write-Host "      Clean up our Artifacts/Archive directory"
 
     $null = Remove-Item $script:ArtifactsPath -Force -Recurse -ErrorAction 0
     $null = New-Item $script:ArtifactsPath -ItemType:Directory
@@ -89,17 +100,30 @@ task Clean {
     #>
 }#Clean
 
+task Format {
+    Write-Host "      Performing code styling checks"
+    #Copy-Item -Path "$script:ModuleSourcePath\*" -Destination $script:ArtifactsPath -Exclude *.psd1, *.psm1 -Recurse -ErrorAction Stop
+    $a = Get-ChildItem -Path $script:ModuleSourcePath -Exclude *.psd1, *.psm1 -Recurse -ErrorAction Stop | Where-Object { -not $_.PSIsContainer }
+    foreach ($file in $a) {
+        $raw = $null
+        $eval = $null
+        $raw = Get-Content -Path $file.FullName -Raw
+        $eval = Compare-Object -ReferenceObject $raw -DifferenceObject (Invoke-Formatter -ScriptDefinition $raw)
+        if ($null -ne $eval) {
+            throw "$($file.Name) does not adhere to styling guidelines."
+        }
+    }
+    Write-Host -ForegroundColor Green '...Code styling checks complete!'
+}
+
 #Synopsis: Invokes Script Analyzer against the Module source path
 task Analyze {
-    Write-Host -NoNewLine "      Performing Module ScriptAnalyzer checks"
+    Write-Host "      Performing Module ScriptAnalyzer checks"
     $scriptAnalyzerParams = @{
-        Path        = $script:ModuleSourcePath
-        ExcludeRule = @(
-            'PSAvoidGlobalVars'
-        )
-        Severity    = @('Error', 'Warning')
-        Recurse     = $true
-        Verbose     = $false
+        Path    = $script:ModuleSourcePath
+        Setting = "PSScriptAnalyzerSettings.psd1"
+        Recurse = $true
+        Verbose = $false
     }
 
     $scriptAnalyzerResults = Invoke-ScriptAnalyzer @scriptAnalyzerParams
@@ -116,15 +140,12 @@ task Analyze {
 #Synopsis: Invokes Script Analyzer against the Tests path if it exists
 task AnalyzeTests -After Analyze {
     if (Test-Path -Path $script:TestsPath) {
-        Write-Host -NoNewLine "      Performing Test ScriptAnalyzer checks"
+        Write-Host "      Performing Test ScriptAnalyzer checks"
         $scriptAnalyzerParams = @{
-            Path        = $script:TestsPath
-            ExcludeRule = @(
-
-            )
-            Severity    = @('Error', 'Warning')
-            Recurse     = $true
-            Verbose     = $false
+            Path    = $script:TestsPath
+            Setting = "PSScriptAnalyzerSettings.psd1"
+            Recurse = $true
+            Verbose = $false
         }
 
         $scriptAnalyzerResults = Invoke-ScriptAnalyzer @scriptAnalyzerParams
@@ -227,9 +248,9 @@ task Test {
     }
 }#Test
 
-#Synopsis: Used primarily during active development to generate xml file to graphically display code coverage in VSCode
+#Synopsis: Used primarily during active development to generate xml file to graphically display code coverage in VSCode using Coverage Gutters
 task DevCC {
-    Write-Host -NoNewLine "      Generating code coverage report at root."
+    Write-Host '      Generating code coverage report at root.'
     $invokePesterParams = @{
         Path                   = 'Tests\Unit'
         CodeCoverage           = "$ModuleName\*\*.ps1"
@@ -241,7 +262,7 @@ task DevCC {
 
 # Synopsis: Build help files for module
 task CreateHelpStart {
-    Write-Host -NoNewLine '      Performing all help related actions.'
+    Write-Host '      Performing all help related actions.'
     Write-Host 'Importing platyPS v0.12.0'
     Import-Module platyPS -RequiredVersion 0.12.0
 }#CreateHelpStart
@@ -288,13 +309,13 @@ task CreateMarkdownHelp -After CreateHelpStart {
         throw 'Missing documentation. Please review and rebuild.'
     }
 
-    Write-Host -NoNewLine '      Creating markdown documentation with PlatyPS'
+    Write-Host '      Creating markdown documentation with PlatyPS'
     Write-Host -ForegroundColor Green '...Complete!'
 }#CreateMarkdownHelp
 
 # Synopsis: Build the external xml help file from markdown help files with PlatyPS
-task CreateExternalHelp -After CreateMarkdownHelp{
-    Write-Host -NoNewLine '      Creating external xml help file'
+task CreateExternalHelp -After CreateMarkdownHelp {
+    Write-Host '      Creating external xml help file'
     $null = New-ExternalHelp "$($script:ArtifactsPath)\docs" -OutputPath "$($script:ArtifactsPath)\en-US\" -Force
     Write-Host -ForeGroundColor green '...Complete!'
 }#CreateExternalHelp
@@ -324,7 +345,7 @@ task UpdateCBH -Before Build {
 
 # Synopsis: Builds the Module to the Artifacts folder
 task Build {
-    Write-Host "      Performing Module Build"
+    Write-Host '      Performing Module Build'
 
     Write-Host '        Copying Module Manifest to Artifacts...'
     Copy-Item -Path $script:ModuleManifestFile -Destination $script:ArtifactsPath -Recurse -ErrorAction Stop
@@ -351,7 +372,7 @@ task Build {
         Remove-Item "$($script:ArtifactsPath)\Private" -Recurse -Force -ErrorAction Stop
     }
 
-    Write-Host "        Overwriting docs output"
+    Write-Host '        Overwriting docs output'
     Move-Item "$($script:ArtifactsPath)\docs\*.md" -Destination "..\docs\" -Force
     Remove-Item "$($script:ArtifactsPath)\docs" -Recurse -Force -ErrorAction Stop
 
@@ -360,7 +381,7 @@ task Build {
 
 #Synopsis: Creates an archive of the built Module
 task Archive {
-    Write-Host -NoNewLine "      Performing Archive"
+    Write-Host '      Performing Archive'
     $archivePath = Join-Path -Path $BuildRoot -ChildPath 'Archive'
     if (Test-Path -Path $archivePath) {
         $null = Remove-Item -Path $archivePath -Recurse -Force
