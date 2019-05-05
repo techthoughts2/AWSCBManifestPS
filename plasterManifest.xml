@@ -83,10 +83,10 @@
 
     <file source='.gitignore' destination='.gitignore' />
     <templateFile condition="$PLASTER_PARAM_Changelog -eq 'CHANGELOG'" source='GitFiles\CHANGELOG.md' destination='.github\CHANGELOG.md' />
-    <templateFile condition="$PLASTER_PARAM_License -eq 'MIT'" source='GitFiles\MITLICENSE.txt' destination='LICENSE.txt' />
-    <templateFile condition="$PLASTER_PARAM_License -eq 'Apache'" source='GitFiles\APACHELICENSE.txt' destination='LICENSE.txt' />
-    <templateFile condition="$PLASTER_PARAM_License -eq 'GNU'" source='GitFiles\GNULICENSE.txt' destination='LICENSE.txt' />
-    <templateFile condition="$PLASTER_PARAM_License -eq 'ISC'" source='GitFiles\ISCLICENSE.txt' destination='LICENSE.txt' />
+    <templateFile condition="$PLASTER_PARAM_License -eq 'MIT'" source='GitFiles\MITLICENSE' destination='LICENSE' />
+    <templateFile condition="$PLASTER_PARAM_License -eq 'Apache'" source='GitFiles\APACHELICENSE' destination='LICENSE' />
+    <templateFile condition="$PLASTER_PARAM_License -eq 'GNU'" source='GitFiles\GNULICENSE' destination='LICENSE' />
+    <templateFile condition="$PLASTER_PARAM_License -eq 'ISC'" source='GitFiles\ISCLICENSE' destination='LICENSE' />
     <file condition="$PLASTER_PARAM_COC -eq 'CONDUCT'" source='GitFiles\CODE_OF_CONDUCT.md' destination='.github\CODE_OF_CONDUCT.md' />
     <templateFile condition="$PLASTER_PARAM_Contribute -eq 'CONTRIBUTING'" source='GitFiles\CONTRIBUTING.md' destination='.github\CONTRIBUTING.md' />
     <file condition="$PLASTER_PARAM_RepoType -eq 'GITHUB'" source='GitFiles\PULL_REQUEST_TEMPLATE.md' destination='.github\PULL_REQUEST_TEMPLATE.md'/>
